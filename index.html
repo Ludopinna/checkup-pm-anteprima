@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Check-up Property Manager · anteprima</title>
+<style>html,body{margin:0;padding:0;background:#0c1038;}</style>
+</head>
+<body>
+
+<!--
+  CHECK-UP FISCALE PROPERTY MANAGER — BNB Tax Genius
+  Tool di lead generation: quiz a bivi → contatti → diagnosi → offerta giusta.
+  Le regole sono in regole-check-up-pm.md (da validare con Lorenzo).
+  Per il dev: blocco CONFIG in fondo alla pagina (webhook Make, link TidyCal, privacy).
+  Tutto è racchiuso in .bnb-check: il template Joomla non entra, e noi non usciamo.
+-->
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=League+Gothic&family=Montserrat:wght@400;500;600;700&display=swap');
+
+.bnb-check{
+  --navy-900:#0c1038;
+  --navy:#1a237e;
+  --navy-ink:#b9bff0;
+  --yellow:#e2be00;
+  --yellow-bright:#ffd426;
+  --gold-deep:#8a7400;
+  --paper:#fbfaf7;
+  --paper-2:#f2efe6;
+  --ink:#16151a;
+  --ink-soft:#57545f;
+  --line:#e5e0d4;
+  --sage:#6baa75;
+  --red:#b8322a;
+  --red-bg:#fbeceb;
+  --amber:#8a6400;
+  --amber-bg:#fdf5dc;
+  --green:#2f7a3c;
+  --green-bg:#e9f4ea;
+
+  --display:"League Gothic","Oswald","Arial Narrow",Impact,sans-serif;
+  --body:"Montserrat",-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+
+  background:var(--navy-900);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:16.5px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  position:relative;overflow:hidden;
+  min-height:100vh;
+  padding:0 0 clamp(40px,7vw,80px);
+}
+.bnb-check *,.bnb-check *::before,.bnb-check *::after{box-sizing:border-box;}
+.bnb-check p,.bnb-check h1,.bnb-check h2,.bnb-check h3,.bnb-check ul,.bnb-check li{margin:0;padding:0;}
+.bnb-check ul{list-style:none;}
+.bnb-check img{max-width:100%;height:auto;}
+.bnb-check [hidden]{display:none !important;}
+
+/* bagliore + quadretti che sfumano ai bordi */
+.bnb-check::before{
+  content:"";position:absolute;top:-420px;left:50%;transform:translateX(-50%);
+  width:min(1100px,150vw);height:900px;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(226,190,0,.18),rgba(226,190,0,0) 62%);
+}
+.bnb-check::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(to right,rgba(255,255,255,.055) 1px,transparent 1px),
+    linear-gradient(to bottom,rgba(255,255,255,.055) 1px,transparent 1px);
+  background-size:clamp(32px,9vw,52px) clamp(32px,9vw,52px);
+  -webkit-mask-image:radial-gradient(ellipse 78% 55% at 50% 30%,#000 0%,rgba(0,0,0,.35) 55%,transparent 82%);
+  mask-image:radial-gradient(ellipse 78% 55% at 50% 30%,#000 0%,rgba(0,0,0,.35) 55%,transparent 82%);
+}
+.bnb-check > *{position:relative;z-index:2;}
+
+/* ---------- header ---------- */
+.bnb-check .topbar{
+  border-bottom:1px solid rgba(255,255,255,.09);
+}
+.bnb-check .topbar-in{
+  max-width:720px;margin:0 auto;padding:10px 16px;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+}
+.bnb-check .topbar img{height:clamp(26px,6.6vw,32px);width:auto;display:block;}
+.bnb-check .topbar .tag{
+  font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--yellow-bright);
+}
+
+.bnb-check .stage{max-width:640px;margin:0 auto;padding:clamp(26px,5vw,48px) 16px 0;}
+
+/* ---------- tipografia ---------- */
+.bnb-check h1,.bnb-check h2{
+  font-family:var(--display);font-weight:400;text-transform:uppercase;
+  letter-spacing:.012em;line-height:.95;text-wrap:balance;
+}
+.bnb-check h1{font-size:clamp(2.3rem,9vw,3.9rem);color:#fff;text-align:center;}
+.bnb-check h1 .ac{color:var(--yellow-bright);}
+.bnb-check .lead{
+  color:var(--navy-ink);text-align:center;max-width:46ch;margin:18px auto 0;
+  font-size:clamp(.95rem,3.6vw,1.06rem);
+}
+.bnb-check .badge{
+  display:table;margin:0 auto 16px;font-weight:700;
+  font-size:.64rem;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--yellow-bright);border:1px solid rgba(226,190,0,.45);border-radius:100px;
+  padding:7px 14px;
+}
+
+/* ---------- intro ---------- */
+.bnb-check .hero-photo{
+  width:clamp(130px,34vw,200px);margin:0 auto 0;
+  filter:drop-shadow(0 26px 44px rgba(0,0,0,.6));
+}
+.bnb-check .hero-photo img{display:block;width:100%;}
+.bnb-check .facts{
+  display:flex;justify-content:center;flex-wrap:wrap;gap:8px 22px;margin:26px 0 0;
+  font-size:.74rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#fff;
+}
+.bnb-check .facts span{display:inline-flex;align-items:center;gap:7px;}
+.bnb-check .facts svg{width:16px;height:16px;color:var(--yellow-bright);}
+
+/* ---------- card ---------- */
+.bnb-check .card{
+  background:#fff;border-radius:10px;
+  padding:clamp(22px,4.4vw,34px);
+  box-shadow:0 30px 60px -30px rgba(0,0,0,.6);
+}
+
+/* ---------- progresso ---------- */
+.bnb-check .progress{display:flex;align-items:center;gap:12px;margin-bottom:22px;}
+.bnb-check .bar{flex:1;height:6px;border-radius:6px;background:var(--paper-2);overflow:hidden;}
+.bnb-check .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#eec600,#d3ae00);transition:width .3s ease;}
+.bnb-check .count{font-size:.7rem;font-weight:700;letter-spacing:.1em;color:var(--ink-soft);white-space:nowrap;}
+.bnb-check .block-name{
+  font-size:.66rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-deep);
+  margin-bottom:8px;
+}
+.bnb-check .q{
+  font-family:var(--body);font-weight:700;font-size:clamp(1.12rem,4.4vw,1.32rem);line-height:1.32;color:var(--ink);
+}
+.bnb-check .help{font-size:.86rem;color:var(--ink-soft);margin-top:8px;line-height:1.5;}
+
+/* ---------- opzioni ---------- */
+.bnb-check .opts{display:flex;flex-direction:column;gap:10px;margin-top:20px;}
+.bnb-check .opt{
+  display:flex;align-items:center;gap:12px;width:100%;text-align:left;cursor:pointer;
+  font-family:var(--body);font-size:.98rem;font-weight:500;color:var(--ink);line-height:1.35;
+  background:var(--paper);border:1.5px solid var(--line);border-radius:7px;
+  padding:14px 16px;transition:border-color .14s ease,background .14s ease,transform .14s ease;
+}
+.bnb-check .opt:hover{border-color:var(--navy);background:#fff;}
+.bnb-check .opt:active{transform:scale(.99);}
+.bnb-check .opt:focus-visible{outline:3px solid var(--yellow);outline-offset:1px;}
+.bnb-check .opt .mk{
+  width:20px;height:20px;flex:0 0 auto;border:2px solid #c9c3b4;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;transition:all .14s ease;
+}
+.bnb-check .opt.multi .mk{border-radius:5px;}
+.bnb-check .opt .mk svg{width:12px;height:12px;color:#fff;opacity:0;}
+.bnb-check .opt[aria-checked="true"]{border-color:var(--navy);background:#fff;}
+.bnb-check .opt[aria-checked="true"] .mk{background:var(--navy);border-color:var(--navy);}
+.bnb-check .opt[aria-checked="true"] .mk svg{opacity:1;}
+
+.bnb-check .nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px;}
+.bnb-check .back{
+  background:none;border:0;cursor:pointer;font-family:var(--body);font-size:.84rem;font-weight:600;
+  color:var(--ink-soft);padding:8px 2px;display:inline-flex;align-items:center;gap:6px;
+}
+.bnb-check .back svg{width:15px;height:15px;}
+.bnb-check .back:hover{color:var(--navy);}
+
+/* ---------- pulsanti ---------- */
+.bnb-check .btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;cursor:pointer;border:0;
+  font-family:var(--display);font-weight:400;line-height:1.2;
+  font-size:clamp(1.28rem,5.6vw,1.7rem);
+  -webkit-text-stroke:.6px currentColor;
+  letter-spacing:.045em;text-transform:uppercase;text-align:center;text-decoration:none;
+  color:var(--ink);
+  background:linear-gradient(180deg,#ffdc4a 0%,#eec600 52%,#d3ae00 100%);
+  border-radius:8px;padding:15px 24px;
+  box-shadow:0 12px 28px -10px rgba(226,190,0,.55),
+             inset 0 1px 0 rgba(255,255,255,.55),
+             inset 0 -2px 0 rgba(138,116,0,.3);
+  transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+}
+.bnb-check .btn:hover{transform:translateY(-2px);filter:brightness(1.05);}
+.bnb-check .btn:active{transform:translateY(1px);}
+.bnb-check .btn:disabled{opacity:.45;cursor:not-allowed;transform:none;filter:none;}
+.bnb-check .btn .arw{display:inline-flex;transition:transform .18s ease;}
+.bnb-check .btn .arw svg{width:17px;height:17px;display:block;}
+.bnb-check .btn:hover .arw{transform:translateX(3px);}
+.bnb-check .btn:focus-visible{outline:3px solid #fff;outline-offset:3px;}
+.bnb-check .btn-sm{width:auto;font-size:1.15rem;padding:10px 20px;}
+.bnb-check .btn-intro{max-width:400px;margin:30px auto 0;}
+
+/* ---------- form contatti ---------- */
+.bnb-check .teaser{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:20px 0 22px;
+}
+.bnb-check .teaser div{
+  border-radius:8px;padding:14px 8px;text-align:center;background:var(--paper);border:1px solid var(--line);
+}
+.bnb-check .teaser b{
+  display:block;font-family:var(--display);font-weight:400;font-size:2.5rem;line-height:1;
+  filter:blur(7px);user-select:none;
+}
+.bnb-check .teaser span{display:block;font-size:.58rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);margin-top:6px;}
+.bnb-check .teaser .r b{color:var(--red);}
+.bnb-check .teaser .y b{color:var(--amber);}
+.bnb-check .teaser .g b{color:var(--green);}
+
+.bnb-check form{display:flex;flex-direction:column;gap:12px;}
+.bnb-check label.fl{
+  display:block;font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-soft);margin-bottom:6px;
+}
+.bnb-check input[type="text"],.bnb-check input[type="email"],.bnb-check input[type="tel"]{
+  width:100%;font-family:var(--body);font-size:1rem;color:var(--ink);
+  background:var(--paper);border:1.5px solid var(--line);border-radius:5px;
+  padding:13px 14px;line-height:1.3;transition:border-color .14s ease;
+}
+.bnb-check input:focus{border-color:var(--navy);outline:none;}
+.bnb-check input:focus-visible{outline:3px solid var(--yellow);outline-offset:1px;}
+.bnb-check .consent{
+  display:flex;gap:10px;align-items:flex-start;font-size:.74rem;line-height:1.45;color:var(--ink-soft);cursor:pointer;
+}
+.bnb-check .consent input{width:19px;height:19px;margin:2px 0 0;flex:0 0 auto;accent-color:var(--navy);}
+.bnb-check .consent a{color:var(--navy);}
+.bnb-check .err{color:var(--red);font-size:.78rem;font-weight:600;min-height:1em;}
+.bnb-check .small{font-size:.74rem;color:var(--ink-soft);text-align:center;line-height:1.5;}
+
+/* ---------- risultati ---------- */
+.bnb-check .res-head{text-align:center;}
+.bnb-check .res-head h2{font-size:clamp(2.1rem,8.4vw,3.2rem);color:#fff;}
+.bnb-check .res-head p{color:var(--navy-ink);margin-top:12px;font-size:.98rem;}
+.bnb-check .score{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:24px 0 18px;
+}
+.bnb-check .score div{border-radius:8px;padding:14px 6px;text-align:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);}
+.bnb-check .score b{display:block;font-family:var(--display);font-weight:400;font-size:2.6rem;line-height:1;}
+.bnb-check .score span{display:block;font-size:.6rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--navy-ink);margin-top:6px;}
+.bnb-check .score .r b{color:#ff8a80;}
+.bnb-check .score .y b{color:var(--yellow-bright);}
+.bnb-check .score .g b{color:#9ad6a3;}
+
+.bnb-check .findings{display:flex;flex-direction:column;gap:12px;}
+.bnb-check .f{
+  background:#fff;border-radius:8px;padding:18px 18px 18px 16px;
+  border-left:5px solid var(--line);display:flex;gap:14px;align-items:flex-start;
+}
+.bnb-check .f .ico{
+  width:32px;height:32px;border-radius:50%;flex:0 0 auto;display:flex;align-items:center;justify-content:center;
+}
+.bnb-check .f .ico svg{width:17px;height:17px;}
+.bnb-check .f .lvl{font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;}
+.bnb-check .f h3{font-size:1rem;font-weight:700;line-height:1.35;margin:3px 0 6px;color:var(--ink);}
+.bnb-check .f p{font-size:.9rem;line-height:1.55;color:var(--ink-soft);}
+.bnb-check .f.rosso{border-left-color:var(--red);}
+.bnb-check .f.rosso .ico{background:var(--red-bg);color:var(--red);}
+.bnb-check .f.rosso .lvl{color:var(--red);}
+.bnb-check .f.giallo{border-left-color:#d9ab00;}
+.bnb-check .f.giallo .ico{background:var(--amber-bg);color:var(--amber);}
+.bnb-check .f.giallo .lvl{color:var(--amber);}
+.bnb-check .f.verde{border-left-color:var(--sage);}
+.bnb-check .f.verde .ico{background:var(--green-bg);color:var(--green);}
+.bnb-check .f.verde .lvl{color:var(--green);}
+
+.bnb-check .offer{
+  margin-top:26px;background:var(--paper-2);border-radius:10px;padding:clamp(22px,4.4vw,32px);text-align:center;
+  border:2px solid var(--yellow);
+}
+.bnb-check .offer .kicker{font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-deep);}
+.bnb-check .offer h3{
+  font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:.012em;
+  font-size:clamp(1.9rem,7vw,2.5rem);line-height:.95;color:var(--navy);margin:8px 0 10px;
+}
+.bnb-check .offer p{font-size:.93rem;color:var(--ink-soft);max-width:46ch;margin:0 auto;}
+.bnb-check .offer ul{display:flex;flex-direction:column;gap:7px;margin:16px auto 0;max-width:380px;text-align:left;}
+.bnb-check .offer li{display:flex;gap:9px;align-items:flex-start;font-size:.9rem;line-height:1.45;}
+.bnb-check .offer li svg{width:16px;height:16px;flex:0 0 auto;margin-top:3px;color:var(--gold-deep);}
+.bnb-check .offer .price{
+  font-family:var(--display);font-size:2.4rem;line-height:1;color:var(--ink);margin:18px 0 4px;letter-spacing:.02em;
+}
+.bnb-check .offer .price small{font-family:var(--body);font-size:.74rem;color:var(--ink-soft);letter-spacing:0;}
+.bnb-check .offer .btn{margin-top:16px;}
+.bnb-check .offer .after{font-size:.76rem;color:var(--ink-soft);margin-top:12px;}
+
+.bnb-check .disclaimer{font-size:.72rem;color:var(--navy-ink);text-align:center;margin-top:22px;line-height:1.5;opacity:.85;}
+.bnb-check .preview-note{
+  font-size:.72rem;color:var(--navy-900);background:var(--yellow-bright);border-radius:6px;
+  padding:8px 12px;text-align:center;margin-top:14px;font-weight:600;
+}
+
+/* comparsa morbida a ogni cambio schermata */
+.bnb-check .fade{animation:bnbFade .32s ease both;}
+@keyframes bnbFade{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+@media (prefers-reduced-motion:reduce){
+  .bnb-check .fade{animation:none;}
+  .bnb-check .bar i{transition:none;}
+}
+</style>
+
+<div class="bnb-check" id="bnb-check">
+
+  <header class="topbar">
+    <div class="topbar-in">
+      <img src="bnb-logo-chiaro.png" alt="BNB Tax Genius" width="146" height="120">
+      <span class="tag">Check-up PM</span>
+    </div>
+  </header>
+
+  <!-- 1 · INTRO -->
+  <section class="stage fade" data-screen="intro">
+    <div class="hero-photo"><img src="lorenzo-stagno-hero.webp" alt="Lorenzo Stagno, commercialista di BNB Tax Genius" width="272" height="300"></div>
+    <span class="badge">Per chi gestisce immobili altrui</span>
+    <h1>Il check-up fiscale del <span class="ac">property manager</span></h1>
+    <p class="lead">Rispondi a qualche domanda su come lavori. Alla fine vedi cosa nella tua impostazione va sistemato, cosa va verificato e dove puoi pagare meno, tu o i tuoi proprietari.</p>
+    <div class="facts">
+      <span><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 6v4.3l2.8 1.7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>3 minuti</span>
+      <span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.6l4 4 8-9.2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Gratuito</span>
+      <span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.6l4 4 8-9.2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>Le domande di Lorenzo Stagno</span>
+    </div>
+    <button class="btn btn-intro" type="button" data-action="start">Inizia il check-up<span class="arw"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 10h11.5M11 5l4.5 5-4.5 5" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+  </section>
+
+  <!-- 2 · DOMANDE -->
+  <section class="stage" data-screen="quiz" hidden>
+    <div class="card" id="bnb-q-card"></div>
+  </section>
+
+  <!-- 3 · CONTATTI -->
+  <section class="stage" data-screen="gate" hidden>
+    <div class="card fade">
+      <p class="block-name">Check-up completato</p>
+      <p class="q">Il tuo risultato è pronto</p>
+      <p class="help">Lasciaci i tuoi contatti per vederlo. Lorenzo riceve le tue risposte: se poi vi sentite, non dovrai ripeterle.</p>
+      <div class="teaser" aria-hidden="true">
+        <div class="r"><b id="bnb-t-r">0</b><span>Da sistemare</span></div>
+        <div class="y"><b id="bnb-t-y">0</b><span>Da verificare</span></div>
+        <div class="g"><b id="bnb-t-g">0</b><span>Opportunità</span></div>
+      </div>
+      <form id="bnb-form" novalidate>
+        <div><label class="fl" for="bnb-nome">Nome</label><input id="bnb-nome" name="nome" type="text" autocomplete="given-name" required></div>
+        <div><label class="fl" for="bnb-email">Email</label><input id="bnb-email" name="email" type="email" autocomplete="email" required></div>
+        <div><label class="fl" for="bnb-tel">WhatsApp</label><input id="bnb-tel" name="telefono" type="tel" autocomplete="tel" inputmode="tel" required></div>
+        <label class="consent"><input type="checkbox" name="privacy" id="bnb-privacy"><span>Acconsento al trattamento dei miei dati e dichiaro di aver preso visione della <a id="bnb-privacy-link" href="/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>.</span></label>
+        <p class="err" id="bnb-err" role="alert"></p>
+        <button class="btn" type="submit" id="bnb-submit">Vedi il risultato<span class="arw"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 10h11.5M11 5l4.5 5-4.5 5" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span></button>
+        <p class="small">Niente spam. Ti scriviamo solo per il check-up.</p>
+      </form>
+      <div class="nav"><button class="back" type="button" data-action="back"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16.5 10H5M9 5l-4.5 5L9 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>Rivedi le risposte</button></div>
+    </div>
+  </section>
+
+  <!-- 4 · RISULTATO -->
+  <section class="stage" data-screen="result" hidden>
+    <div class="fade">
+      <div class="res-head">
+        <span class="badge">Il tuo check-up</span>
+        <h2 id="bnb-r-title"></h2>
+        <p id="bnb-r-sub"></p>
+      </div>
+      <div class="score">
+        <div class="r"><b id="bnb-s-r">0</b><span>Da sistemare</span></div>
+        <div class="y"><b id="bnb-s-y">0</b><span>Da verificare</span></div>
+        <div class="g"><b id="bnb-s-g">0</b><span>Opportunità</span></div>
+      </div>
+      <ul class="findings" id="bnb-findings"></ul>
+      <div class="offer" id="bnb-offer"></div>
+      <p class="disclaimer">Il check-up è un'indicazione generale costruita sulle tue risposte: non sostituisce l'analisi della tua situazione reale.</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  /* =========================================================
+     CONFIG — da compilare prima della messa online
+     ========================================================= */
+  var CONFIG = {
+    // Webhook Make che crea il contatto su systeme.io con i tag.
+    // Vuoto = anteprima: niente viene inviato.
+    webhookUrl: '',
+    // Dove porta la prenotazione della chiamata conoscitiva
+    callUrl: 'https://tidycal.com/bnbtaxgenius/consulenza-per-affitti-brevi',
+    privacyUrl: '/privacy-policy',
+    tagPrefix: 'checkup-pm'
+  };
+
+  /* =========================================================
+     DOMANDE — testo riscritto dalla checklist di Lorenzo
+     (Check list PM.xlsx). show = quando compare.
+     ========================================================= */
+  function isInd(a){ return a.forma === 'forfettario' || a.forma === 'ordinario'; }
+  function isPM(a){ return a.formula === 'percentuale' || a.formula === 'entrambe'; }
+
+  var QUESTIONS = [
+    { id:'forma', block:'La tua attività',
+      q:'Come sei inquadrato fiscalmente?',
+      opts:[
+        ['forfettario','Partita IVA individuale, regime forfettario'],
+        ['ordinario','Partita IVA individuale, regime semplificato o ordinario'],
+        ['snc','Snc'],
+        ['sas','Sas'],
+        ['srl','Srl'],
+        ['familiare','Impresa familiare']
+      ]},
+    { id:'formula', block:'La tua attività',
+      q:'Come gestisci gli immobili?',
+      opts:[
+        ['percentuale','A percentuale: gestisco per conto del proprietario'],
+        ['sublocazione','In sublocazione: prendo l\'immobile in affitto e lo riaffitto'],
+        ['entrambe','Tutte e due']
+      ]},
+
+    { id:'host', block:'Come lavori con i proprietari', show:isPM,
+      q:'Su Airbnb e Booking, chi è registrato come host principale?',
+      help:'Pensa agli immobili che gestisci a percentuale.',
+      opts:[['proprietario','Il proprietario'],['pm','Io']]},
+    { id:'contratto', block:'Come lavori con i proprietari', show:isPM,
+      q:'Che contratto hai con il proprietario?',
+      opts:[
+        ['nessuno','Nessun contratto scritto'],
+        ['servizi','Fornitura di servizi'],
+        ['mandato_senza','Mandato senza rappresentanza'],
+        ['mandato_con','Mandato con rappresentanza']
+      ]},
+    { id:'incassa', block:'Come lavori con i proprietari', show:isPM,
+      q:'I soldi dell\'ospite (o della piattaforma) a chi arrivano?',
+      opts:[['proprietario','Al proprietario'],['pm','A me']]},
+    { id:'ritenuta', block:'Come lavori con i proprietari', show:isPM,
+      q:'Applichi la ritenuta d\'acconto del 21%?',
+      opts:[['si','Sì'],['no','No']]},
+    { id:'base', block:'Come lavori con i proprietari', show:function(a){ return isPM(a) && a.ritenuta === 'si'; },
+      q:'Su quale importo calcoli la ritenuta?',
+      opts:[
+        ['lordo','Sul lordo pagato dall\'ospite'],
+        ['netto','Sul netto che giro al proprietario'],
+        ['altro','In un altro modo']
+      ]},
+    { id:'fattura', block:'Come lavori con i proprietari', show:isPM,
+      q:'A chi fai fattura per il tuo compenso?',
+      opts:[
+        ['proprietario','Al proprietario'],
+        ['ospite','All\'ospite'],
+        ['ota','Ad Airbnb o Booking'],
+        ['altro','A qualcun altro']
+      ]},
+    { id:'frequenza', block:'Come lavori con i proprietari', show:isPM,
+      q:'Ogni quanto emetti fattura?',
+      opts:[['prenotazione','A ogni prenotazione'],['mensile','Una volta al mese'],['altro','In un altro modo']]},
+
+    { id:'fatturato', block:'Il regime forfettario', show:isInd,
+      q:'Quanto hai fatturato l\'anno scorso?',
+      opts:[['sotto85','Meno di 85.000 €'],['oltre85','Più di 85.000 €']]},
+    { id:'ostative', block:'Il regime forfettario', show:isInd, multi:true,
+      q:'L\'anno scorso ti riguardava una di queste situazioni?',
+      help:'Puoi sceglierne più di una.',
+      opts:[
+        ['dipendenti','Ho speso più di 20.000 € in stipendi per dipendenti'],
+        ['societa_persone','Ho quote in una società di persone, uno studio associato o un\'impresa familiare'],
+        ['srl_controllo','Controllo una srl (o un\'associazione in partecipazione) che fa un\'attività simile alla mia'],
+        ['reddito_dip','Ho avuto più di 35.000 € lordi di reddito da lavoro dipendente, con un rapporto ancora in corso']
+      ],
+      none:['nessuna','Nessuna di queste']},
+
+    { id:'apertura', block:'L\'aliquota al 5%', show:isInd,
+      q:'Quando hai aperto la partita IVA?',
+      opts:[['meno5','Meno di 5 anni fa'],['piu5','5 anni fa o più']]},
+    { id:'precedenti', block:'L\'aliquota al 5%', show:function(a){ return isInd(a) && a.apertura === 'meno5'; },
+      q:'Nei 3 anni prima di aprirla avevi già una partita IVA, quote in una società o lavoravi come collaboratore familiare?',
+      opts:[['si','Sì'],['no','No']]},
+
+    { id:'dipendente', block:'I contributi INPS', show:isInd,
+      q:'Hai anche un lavoro dipendente a tempo pieno?',
+      opts:[['si','Sì'],['no','No']]},
+    { id:'pensionato', block:'I contributi INPS', show:function(a){ return isInd(a) && a.dipendente === 'no'; },
+      q:'Sei in pensione e hai più di 65 anni?',
+      opts:[['si','Sì'],['no','No']]}
+  ];
+
+  /* =========================================================
+     REGOLE — ogni esito è una frase da validare con Lorenzo
+     (vedi regole-check-up-pm.md, stessi codici tag)
+     ========================================================= */
+  function evaluate(a){
+    var out = [];
+    var ost = a.ostative || [];
+    var hasOst = ost.length && ost.indexOf('nessuna') === -1;
+    var forfOk = isInd(a) && a.fatturato === 'sotto85' && !hasOst;
+
+    if (isPM(a)) {
+      if (a.contratto === 'nessuno') out.push({ lvl:'rosso', area:'pm', tag:'contratto-assente',
+        title:'Lavori senza un contratto scritto con il proprietario',
+        text:'È il contratto a stabilire che ruolo hai per il Fisco: da lì dipendono chi incassa, chi fattura e chi applica la ritenuta. Senza, la tua impostazione non ha niente su cui reggersi.' });
+
+      if (a.fattura === 'ota') out.push({ lvl:'rosso', area:'pm', tag:'fattura-ota',
+        title:'Fai fattura ad Airbnb o Booking',
+        text:'Il property manager non fattura mai alla piattaforma. Il tuo cliente è il proprietario oppure l\'ospite, a seconda di come sei inquadrato.' });
+
+      if (a.incassa === 'pm' && a.ritenuta === 'no') out.push({ lvl:'rosso', area:'pm', tag:'ritenuta-mancante',
+        title:'Incassi tu, ma non applichi la ritenuta del 21%',
+        text:'Quando i soldi degli ospiti passano da te, la ritenuta e gli adempimenti che si porta dietro (Certificazione Unica, 770, DAC7) diventano un tuo obbligo.' });
+
+      if (a.host === 'proprietario' && (a.ritenuta === 'no' || a.base === 'lordo')) out.push({ lvl:'giallo', area:'pm', tag:'cedolare-netto',
+        title:'Con un\'altra impostazione, i tuoi proprietari incasserebbero di più',
+        text:'Oggi l\'host principale è il proprietario e la ritenuta non si applica, o si applica sul lordo. Impostando il lavoro in modo diverso il proprietario può pagare la cedolare sul netto: a parità di percentuale, con te incassa di più.' });
+
+      if (a.fattura === 'altro' || a.base === 'altro') out.push({ lvl:'giallo', area:'pm', tag:'caso-non-standard',
+        title:'Una parte della tua impostazione esce dagli schemi',
+        text:'Su ritenuta o fatturazione hai scelto "in un altro modo". Non è per forza un errore, ma è il punto da guardare per primo.' });
+    }
+
+    if (a.forma === 'forfettario') {
+      if (!forfOk) out.push({ lvl:'rosso', area:'fiscale', tag:'forfettario-requisiti',
+        title:'Con queste condizioni non puoi stare nel forfettario',
+        text: a.fatturato === 'oltre85'
+          ? 'Hai superato gli 85.000 € di fatturato: il regime forfettario non è più accessibile.'
+          : 'Almeno una delle situazioni che hai indicato esclude il regime forfettario.' });
+      else out.push({ lvl:'giallo', area:'fiscale', tag:'forfettario-convenienza',
+        title:'Il forfettario ti spetta. Ma ti conviene?',
+        text:'Per un property manager il forfettario tassa l\'86% di quello che fatturi, qualunque siano i tuoi costi veri. Con molte spese può costarti più di un regime ordinario.' });
+    }
+    if (a.forma === 'ordinario' && forfOk) out.push({ lvl:'giallo', area:'fiscale', tag:'forfettario-possibile',
+      title:'Avresti i requisiti per il forfettario',
+      text:'Non è detto che ti convenga: per un property manager il forfettario tassa l\'86% del fatturato. Va fatto il conto sui tuoi numeri.' });
+
+    if (forfOk && a.apertura === 'meno5' && a.precedenti === 'no') out.push({ lvl:'verde', area:'fiscale', tag:'aliquota-5',
+      title: a.forma === 'forfettario' ? 'Puoi usare l\'aliquota al 5%' : 'Nel forfettario avresti l\'aliquota al 5%',
+      text:'Hai aperto la partita IVA da meno di 5 anni e non avevi attività nei 3 anni prima: nel regime forfettario l\'imposta è al 5% invece che al 15%. Se oggi paghi il 15%, stai pagando il triplo.' });
+
+    if (isInd(a) && a.dipendente === 'si') out.push({ lvl:'verde', area:'fiscale', tag:'inps-dipendente',
+      title:'Con un lavoro dipendente a tempo pieno, niente contributi INPS sulla partita IVA',
+      text:'Se oggi li stai pagando, è un costo che puoi togliere.' });
+
+    if (isInd(a) && a.pensionato === 'si') out.push({ lvl:'verde', area:'fiscale', tag:'inps-pensionato',
+      title:'Hai diritto allo sconto del 50% sui contributi INPS',
+      text:'Da pensionato con più di 65 anni i contributi sulla partita IVA si dimezzano. Verifica che lo sconto ti venga applicato.' });
+
+    var order = { rosso:0, giallo:1, verde:2 };
+    out.sort(function(x,y){ return order[x.lvl] - order[y.lvl]; });
+    return out;
+  }
+
+  /* L'offerta segue il tipo di problema emerso */
+  function pickOffer(findings){
+    var pm = findings.some(function(f){ return f.area === 'pm' && f.lvl !== 'verde'; });
+    if (pm) return {
+      code:'pacchetto-pm', kicker:'Il passo giusto per te',
+      title:'Pacchetto Property Manager',
+      text:'Lorenzo imposta con te la parte che il commercialista generalista di solito non sa gestire. Resti con il tuo commercialista: sistemi solo questo pezzo, una volta per tutte.',
+      bullets:['Il contratto giusto con i proprietari','Fatturazione e ritenute impostate correttamente','Reportistica per i proprietari','Documento passo per passo dopo la call'],
+      price:'397 €', priceNote:'IVA inclusa'
+    };
+    if (findings.length) return {
+      code:'consulenza', kicker:'Il passo giusto per te',
+      title:'Consulenza con Lorenzo',
+      text:'Un\'ora sui tuoi numeri: quale regime ti conviene davvero e quanto risparmi. Dopo la call ricevi un documento passo per passo.',
+      bullets:['Il conto sul tuo fatturato reale','Regime, aliquota e contributi','Documento passo per passo dopo la call'],
+      price:'97 €', priceNote:'IVA inclusa'
+    };
+    return {
+      code:'call', kicker:'Il prossimo passo',
+      title:'Facciamo una verifica a voce',
+      text:'Dalle risposte non emergono campanelli d\'allarme. In 15 minuti con Lorenzo verifichi che sia tutto in ordine anche nei dettagli.',
+      bullets:[], price:'', priceNote:''
+    };
+  }
+
+  /* =========================================================
+     MOTORE
+     ========================================================= */
+  var root = document.getElementById('bnb-check');
+  var card = document.getElementById('bnb-q-card');
+  var answers = {};
+  var path = [];          // id delle domande viste, per tornare indietro
+  var current = null;
+  var ICON_ARW = '<span class="arw"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 10h11.5M11 5l4.5 5-4.5 5" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/></svg></span>';
+  var ICON_TICK = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.6l4 4 8-9.2" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var ICON_BACK = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M16.5 10H5M9 5l-4.5 5L9 15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var LVL = {
+    rosso:{ label:'Da sistemare', icon:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 5.5v5.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="10" cy="14.6" r="1.4" fill="currentColor"/></svg>' },
+    giallo:{ label:'Da verificare', icon:'<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="4.6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12.4 12.4l3.6 3.6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>' },
+    verde:{ label:'Opportunità', icon:'<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 13l4-4 3 3 5-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12.5 6H16v3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>' }
+  };
+
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+  function visible(){ return QUESTIONS.filter(function(q){ return !q.show || q.show(answers); }); }
+  function nextAfter(id){
+    var v = visible(), i = -1;
+    for (var k = 0; k < v.length; k++) if (v[k].id === id) i = k;
+    return v[i + 1] || null;
+  }
+  // tiene solo le risposte alle domande ancora visibili (se si cambia strada tornando indietro)
+  function prune(){
+    var ids = visible().map(function(q){ return q.id; });
+    Object.keys(answers).forEach(function(k){ if (ids.indexOf(k) === -1) delete answers[k]; });
+  }
+
+  function show(name){
+    root.querySelectorAll('[data-screen]').forEach(function(s){ s.hidden = s.getAttribute('data-screen') !== name; });
+    var top = root.getBoundingClientRect().top + window.pageYOffset;
+    if (window.pageYOffset > top) window.scrollTo({ top:top, behavior:'smooth' });
+  }
+
+  function renderQuestion(q){
+    current = q;
+    var v = visible();
+    var idx = 0;
+    for (var k = 0; k < v.length; k++) if (v[k].id === q.id) idx = k;
+    var pct = Math.round(idx / v.length * 100);
+    var val = answers[q.id];
+    var sel = q.multi ? (val || []) : val;
+    var opts = q.opts.slice();
+    if (q.none) opts.push(q.none);
+
+    var html = ''
+      + '<div class="fade">'
+      + '<div class="progress"><div class="bar"><i style="width:' + pct + '%"></i></div><span class="count">' + (idx + 1) + ' / ' + v.length + '</span></div>'
+      + '<p class="block-name">' + esc(q.block) + '</p>'
+      + '<p class="q" id="bnb-ql">' + esc(q.q) + '</p>'
+      + (q.help ? '<p class="help">' + esc(q.help) + '</p>' : '')
+      + '<div class="opts" role="' + (q.multi ? 'group' : 'radiogroup') + '" aria-labelledby="bnb-ql">';
+    opts.forEach(function(o){
+      var on = q.multi ? sel.indexOf(o[0]) !== -1 : sel === o[0];
+      html += '<button type="button" class="opt' + (q.multi ? ' multi' : '') + '" role="' + (q.multi ? 'checkbox' : 'radio') + '" aria-checked="' + on + '" data-v="' + o[0] + '"><span class="mk">' + ICON_TICK + '</span><span>' + esc(o[1]) + '</span></button>';
+    });
+    html += '</div><div class="nav">'
+      + (path.length ? '<button class="back" type="button" data-action="back">' + ICON_BACK + 'Indietro</button>' : '<span></span>')
+      + (q.multi ? '<button class="btn btn-sm" type="button" data-action="next"' + (sel.length ? '' : ' disabled') + '>Avanti' + ICON_ARW + '</button>' : '')
+      + '</div></div>';
+    card.innerHTML = html;
+  }
+
+  function goNext(){
+    prune();
+    var n = nextAfter(current.id);
+    path.push(current.id);
+    if (n) renderQuestion(n); else openGate();
+  }
+
+  function openGate(){
+    var f = evaluate(answers);
+    ['rosso','giallo','verde'].forEach(function(l, i){
+      document.getElementById(['bnb-t-r','bnb-t-y','bnb-t-g'][i]).textContent = f.filter(function(x){ return x.lvl === l; }).length;
+    });
+    current = null;
+    show('gate');
+  }
+
+  function back(){
+    var id = path.pop();
+    if (!id) { show('intro'); return; }
+    var q = QUESTIONS.filter(function(x){ return x.id === id; })[0];
+    show('quiz');
+    renderQuestion(q);
+  }
+
+  card.addEventListener('click', function(e){
+    var b = e.target.closest('.opt');
+    if (b) {
+      var v = b.getAttribute('data-v');
+      if (current.multi) {
+        var arr = (answers[current.id] || []).slice();
+        if (current.none && v === current.none[0]) arr = arr.indexOf(v) === -1 ? [v] : [];
+        else {
+          arr = arr.filter(function(x){ return !current.none || x !== current.none[0]; });
+          var i = arr.indexOf(v);
+          if (i === -1) arr.push(v); else arr.splice(i, 1);
+        }
+        answers[current.id] = arr;
+        renderQuestion(current);
+      } else {
+        answers[current.id] = v;
+        card.querySelectorAll('.opt').forEach(function(o){ o.setAttribute('aria-checked', o === b); });
+        setTimeout(goNext, 220);
+      }
+    }
+  });
+
+  root.addEventListener('click', function(e){
+    var a = e.target.closest('[data-action]');
+    if (!a) return;
+    var act = a.getAttribute('data-action');
+    if (act === 'start') { show('quiz'); renderQuestion(visible()[0]); }
+    if (act === 'next') goNext();
+    if (act === 'back') back();
+  });
+
+  /* ---------- contatti e invio ---------- */
+  document.getElementById('bnb-privacy-link').href = CONFIG.privacyUrl;
+
+  function normPhone(p){
+    var s = String(p).replace(/[^\d+]/g, '');
+    if (s.indexOf('00') === 0) s = '+' + s.slice(2);
+    if (s.charAt(0) !== '+') s = (s.indexOf('39') === 0 && s.length > 10 ? '+' : '+39') + s;
+    return s;
+  }
+  function labelOf(qid, v){
+    var q = QUESTIONS.filter(function(x){ return x.id === qid; })[0];
+    var all = q.opts.concat(q.none ? [q.none] : []);
+    var o = all.filter(function(x){ return x[0] === v; })[0];
+    return o ? o[1] : v;
+  }
+
+  document.getElementById('bnb-form').addEventListener('submit', function(e){
+    e.preventDefault();
+    var nome = this.nome.value.trim(), email = this.email.value.trim(), tel = this.telefono.value.trim();
+    var err = document.getElementById('bnb-err');
+    if (!nome) { err.textContent = 'Scrivi il tuo nome.'; this.nome.focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Controlla l\'email.'; this.email.focus(); return; }
+    if (tel.replace(/\D/g, '').length < 8) { err.textContent = 'Controlla il numero WhatsApp.'; this.telefono.focus(); return; }
+    if (!this.privacy.checked) { err.textContent = 'Serve il consenso alla privacy per continuare.'; return; }
+    err.textContent = '';
+
+    var findings = evaluate(answers);
+    var offer = pickOffer(findings);
+    var tags = [CONFIG.tagPrefix, CONFIG.tagPrefix + '-offerta-' + offer.code].concat(
+      findings.map(function(f){ return CONFIG.tagPrefix + '-' + f.tag; }));
+    var risposte = visible().map(function(q){
+      var v = answers[q.id];
+      v = Array.isArray(v) ? v.map(function(x){ return labelOf(q.id, x); }).join('; ') : labelOf(q.id, v);
+      return q.q + ' → ' + v;
+    }).join('\n');
+
+    var data = new URLSearchParams();
+    data.append('nome', nome);
+    data.append('email', email);
+    data.append('telefono', normPhone(tel));
+    data.append('tags', tags.join(','));
+    data.append('offerta', offer.code);
+    data.append('rossi', findings.filter(function(f){ return f.lvl === 'rosso'; }).length);
+    data.append('gialli', findings.filter(function(f){ return f.lvl === 'giallo'; }).length);
+    data.append('verdi', findings.filter(function(f){ return f.lvl === 'verde'; }).length);
+    data.append('esiti', findings.map(function(f){ return '[' + LVL[f.lvl].label + '] ' + f.title; }).join('\n'));
+    data.append('risposte', risposte);
+    Object.keys(answers).forEach(function(k){ data.append('r_' + k, [].concat(answers[k]).join(',')); });
+    var qs = new URLSearchParams(location.search);
+    ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(function(k){ if (qs.get(k)) data.append(k, qs.get(k)); });
+    data.append('pagina', location.href.split('?')[0]);
+
+    if (CONFIG.webhookUrl) {
+      // no-cors + form-urlencoded: nessun preflight, Make legge i campi così come sono
+      fetch(CONFIG.webhookUrl, { method:'POST', mode:'no-cors', body:data, keepalive:true }).catch(function(){});
+    }
+    if (window.fbq) window.fbq('track', 'Lead', { content_name:'check-up-pm', content_category:offer.code });
+
+    renderResult(findings, offer);
+  });
+
+  function renderResult(findings, offer){
+    var r = findings.filter(function(f){ return f.lvl === 'rosso'; }).length;
+    var y = findings.filter(function(f){ return f.lvl === 'giallo'; }).length;
+    var g = findings.filter(function(f){ return f.lvl === 'verde'; }).length;
+    document.getElementById('bnb-s-r').textContent = r;
+    document.getElementById('bnb-s-y').textContent = y;
+    document.getElementById('bnb-s-g').textContent = g;
+
+    var title, sub;
+    if (r) { title = r === 1 ? 'C\'è un punto da sistemare' : 'Ci sono ' + r + ' punti da sistemare'; sub = 'Partono dai più urgenti. Sotto trovi cosa emerge dalle tue risposte.'; }
+    else if (y) { title = 'Niente di grave, ma qualcosa da verificare'; sub = 'Nessun errore evidente. Ci sono però punti su cui puoi fare meglio.'; }
+    else if (g) { title = 'Sei in ordine, e puoi pagare meno'; sub = 'Nessun campanello d\'allarme, e qualche vantaggio da sfruttare.'; }
+    else { title = 'Nessun campanello d\'allarme'; sub = 'Dalle risposte la tua impostazione regge.'; }
+    document.getElementById('bnb-r-title').textContent = title;
+    document.getElementById('bnb-r-sub').textContent = sub;
+
+    document.getElementById('bnb-findings').innerHTML = findings.map(function(f){
+      return '<li class="f ' + f.lvl + '"><span class="ico">' + LVL[f.lvl].icon + '</span><div>'
+        + '<span class="lvl">' + LVL[f.lvl].label + '</span><h3>' + esc(f.title) + '</h3><p>' + esc(f.text) + '</p></div></li>';
+    }).join('');
+
+    var o = '<p class="kicker">' + esc(offer.kicker) + '</p><h3>' + esc(offer.title) + '</h3><p>' + esc(offer.text) + '</p>';
+    if (offer.bullets.length) o += '<ul>' + offer.bullets.map(function(b){ return '<li>' + ICON_TICK + '<span>' + esc(b) + '</span></li>'; }).join('') + '</ul>';
+    if (offer.price) o += '<p class="price">' + esc(offer.price) + ' <small>' + esc(offer.priceNote) + '</small></p>';
+    o += '<a class="btn" href="' + CONFIG.callUrl + '" target="_blank" rel="noopener">Prenota la chiamata con Lorenzo' + ICON_ARW + '</a>';
+    o += '<p class="after">Si parte da 15 minuti gratuiti: guardate insieme il tuo check-up e decidete se serve andare avanti.</p>';
+    if (!CONFIG.webhookUrl) o += '<p class="preview-note">Anteprima: il webhook non è configurato, i dati non sono stati inviati.</p>';
+    document.getElementById('bnb-offer').innerHTML = o;
+
+    show('result');
+  }
+})();
+</script>
+
+</body>
+</html>
